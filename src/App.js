@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { useAllDocs } from 'react-pouchdb';
+import Header from './components/Header';
+import ToDoList from './components/ToDoList';
 
-function App() {
+const App = () => {
+  const rows = useAllDocs({
+    include_docs: true,
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header />
+      <ToDoList todosFromDB={rows.map((el) => el.doc)} />
     </div>
   );
-}
+};
 
 export default App;

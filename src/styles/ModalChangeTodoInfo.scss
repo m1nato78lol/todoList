@@ -1,0 +1,20 @@
+.modal {
+
+  &_box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #ffffff;
+    padding: 10px 10px 20px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &_close_button {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+  }
+}
