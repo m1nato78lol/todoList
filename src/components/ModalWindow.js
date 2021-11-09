@@ -50,59 +50,69 @@ const ModalWindow = (props) => {
   };
 
   const editTodo = async () => {
-    if (newTodoInfo.name === '' || newTodoInfo.description === '') {
-      return;
-    }
-    const newTodos = todos.map((todo) => {
-      if (todo.id === todoInfo.id) {
-        return {
-          id: todoInfo.id,
-          name: newTodoInfo.name || todoInfo.name,
-          description: newTodoInfo.description || todoInfo.description,
-          category: newTodoInfo.category || todoInfo.category,
-          status: todoInfo.status,
-          show: utils.checkShow(todo, searchValue, filterValue),
-        };
+    try {
+      if (newTodoInfo.name === '' || newTodoInfo.description === '') {
+        return;
       }
-      return todo;
-    });
-    const todoFromDB = await db.get(todoInfo.id);
-    todoFromDB.name = newTodoInfo.name || todoInfo.name;
-    todoFromDB.description = newTodoInfo.description || todoInfo.description;
-    todoFromDB.category = newTodoInfo.category || todoInfo.category;
-    todoFromDB.show = true;
-    db.put(todoFromDB);
-    setTodos(newTodos);
-    setOpen(false);
-    setNewTodoInfo({});
+      const newTodos = todos.map((todo) => {
+        if (todo.id === todoInfo.id) {
+          return {
+            id: todoInfo.id,
+            name: newTodoInfo.name || todoInfo.name,
+            description: newTodoInfo.description || todoInfo.description,
+            category: newTodoInfo.category || todoInfo.category,
+            status: todoInfo.status,
+            show: utils.checkShow(todo, searchValue, filterValue),
+          };
+        }
+        return todo;
+      });
+      const todoFromDB = await db.get(todoInfo.id);
+      todoFromDB.name = newTodoInfo.name || todoInfo.name;
+      todoFromDB.description = newTodoInfo.description || todoInfo.description;
+      todoFromDB.category = newTodoInfo.category || todoInfo.category;
+      todoFromDB.show = true;
+      db.put(todoFromDB);
+      setTodos(newTodos);
+      setOpen(false);
+      setNewTodoInfo({});
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const addTodo = () => {
-    if (newTodoInfo.name === ''
+    try {
+      if (newTodoInfo.name === ''
         || newTodoInfo.description === ''
         || !newTodoInfo.name
         || !newTodoInfo.description
-    ) {
-      setNewTodoInfo({
-        name: newTodoInfo.name || '',
-        description: newTodoInfo.description || '',
-      });
-      return;
-    }
-    const uuid = uuidv4();
-    const newTodo = {
-      _id: uuid,
-      id: uuid,
-      name: newTodoInfo.name,
-      description: newTodoInfo.description,
-      category: newTodoInfo.category || 'Хобби',
-      status: 'Не выполнено',
-    };
+      ) {
+        setNewTodoInfo({
+          name: newTodoInfo.name || '',
+          description: newTodoInfo.description || '',
+        });
+        return;
+      }
+      const uuid = uuidv4();
+      const newTodo = {
+        _id: uuid,
+        id: uuid,
+        name: newTodoInfo.name,
+        description: newTodoInfo.description,
+        category: newTodoInfo.category || 'Хобби',
+        status: 'Не выполнено',
+      };
 
-    db.put({ ...newTodo, show: true });
-    setTodos([...todos, { ...newTodo, show: utils.checkShow(newTodo, searchValue, filterValue) }]);
-    setNewTodoInfo({});
-    setOpen(false);
+      db.put({ ...newTodo, show: true });
+      setTodos(
+        [...todos, { ...newTodo, show: utils.checkShow(newTodo, searchValue, filterValue) }],
+      );
+      setNewTodoInfo({});
+      setOpen(false);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleClose = () => {

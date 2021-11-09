@@ -43,21 +43,25 @@ const ToDoList = (props) => {
   const db = useDB();
 
   const handleChange = async (todo) => {
-    const newTodos = todos.map((el) => {
-      if (el.id === todo.id) {
-        return {
-          ...el,
-          status: el.status === 'Выполнено' ? 'Не выполнено' : 'Выполнено',
-        };
-      }
-      return el;
-    });
-    const todoFromDB = await db.get(todo.id);
-    todoFromDB.status = todoFromDB.status === 'Выполнено'
-      ? 'Не выполнено'
-      : 'Выполнено';
-    await db.put(todoFromDB);
-    setTodos(newTodos);
+    try {
+      const newTodos = todos.map((el) => {
+        if (el.id === todo.id) {
+          return {
+            ...el,
+            status: el.status === 'Выполнено' ? 'Не выполнено' : 'Выполнено',
+          };
+        }
+        return el;
+      });
+      const todoFromDB = await db.get(todo.id);
+      todoFromDB.status = todoFromDB.status === 'Выполнено'
+        ? 'Не выполнено'
+        : 'Выполнено';
+      setTodos(newTodos);
+      await db.put(todoFromDB);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const changeFilterValue = (event, newValue) => {
@@ -78,9 +82,14 @@ const ToDoList = (props) => {
   };
 
   const deleteTodo = async (deletedTodo) => {
-    const newTodos = todos.filter((todo) => todo.id !== deletedTodo.id);
-    await db.remove(deletedTodo);
-    setTodos(newTodos);
+    try {
+      const newTodos = todos.filter((todo) => todo.id !== deletedTodo.id);
+      const deletedTodoFromDB = await db.get(deletedTodo.id);
+      await db.remove(deletedTodoFromDB);
+      setTodos(newTodos);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const changeSearch = (value) => {
